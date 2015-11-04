@@ -5,12 +5,17 @@
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
+# Short-Description: PIM-SM/SSM multicast routing daemon
+# Description:       Lightweight, stand-alone PIM-SM/SSM multicast routing daemon
 ### END INIT INFO
 
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/sbin/pimd
 NAME=pimd
-DESC=pimd
+DESC="PIM-SM/SSM multicast routing daemon"
+PIDFILE="/run/${NAME}.pid"
+
+. /lib/lsb/init-functions
 
 test -x $DAEMON || exit 0
 
@@ -18,25 +23,34 @@ set -e
 
 case "$1" in
   start)
-	echo -n "Starting $DESC: "
+	log_daemon_msg "Starting $DESC" "$NAME"
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON
-	echo "$NAME."
+	log_end_msg $?
 	;;
   stop)
-	echo -n "Stopping $DESC: "
+	log_daemon_msg "Stopping $DESC" "$NAME"
 	start-stop-daemon --stop --quiet --oknodo --pidfile /var/run/$NAME.pid \
-		--exec $DAEMON
-	echo "$NAME."
+		--exec $DAEMON --retry 5
+	log_end_msg $?
 	;;
-  restart|force-reload)
-	echo -n "Restarting $DESC: "
+  restart)
+	log_action_begin_msg "Restarting $DESC" "$NAME"
 	start-stop-daemon --stop --quiet --pidfile \
-		/var/run/$NAME.pid --exec $DAEMON
-	sleep 1
+		/var/run/$NAME.pid --exec $DAEMON --retry 5
 	start-stop-daemon --start --quiet --pidfile \
 		/var/run/$NAME.pid --exec $DAEMON
-	echo "$NAME."
+	log_end_msg $?
+	;;
+  reload|force-reload)
+	log_action_begin_msg "Reloading $DESC configuration files" "$NAME"
+	start-stop-daemon --oknodo --stop --signal HUP --quiet \
+		--pidfile "$PIDFILE" --exec "$DAEMON"
+	log_end_msg $?
+	;;
+  status)
+	status_of_proc -p "$PIDFILE" "$DAEMON" "$NAME"
+	exit $?
 	;;
   *)
 	N=/etc/init.d/$NAME

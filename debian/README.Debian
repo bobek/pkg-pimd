@@ -21,7 +21,7 @@ and start AutoRP. For more details see the manpage and program documentation.
 Support for staticRP is available since pimd_2.1.0-alpha29.17-4. Patch provided
 by Peter Mann <Peter.Mann@tuke.sk>. There is new configuratation parameter:
 
-rp-address
+rp_address
 
 The future of pimd
 ------------------

@@ -1,0 +1,5 @@
+version=3
+
+# Use githubredir.debian.net for the time being
+opts=dversionmangle=s/\+dfsg$// \
+  https://github.com/troglobit/pimd/releases .*/pimd-(.*).tar.gz

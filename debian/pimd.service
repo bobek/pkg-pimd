@@ -1,0 +1,13 @@
+[Unit]
+Description=PIM-SM/SSM multicast routing daemon
+After=network.target
+
+[Service]
+Environment=CONFIG_FILE=/etc/pimd.conf
+Environment=DAEMON_ARGS=
+EnvironmentFile=-/etc/default/pimd
+ExecStart=/usr/sbin/pimd -f -c $CONFIG_FILE $DAEMON_ARGS
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

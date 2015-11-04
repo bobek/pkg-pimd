@@ -1,0 +1,27 @@
+Author: Apollon Oikonomopoulos <apoikos@debian.org>
+Description: Fix source and manpage spelling errors (lintian)
+
+Forwarded: no
+Last-Update: 2015-11-02
+--- a/pimd.8
++++ b/pimd.8
+@@ -268,7 +268,7 @@
+ may be configured.  In a PIM Assert election, the router advertising the
+ lowest assert preference will be selected as the forwarder and upstream
+ router for the LAN.  Setting 101 should be sufficiently high so that
+-asserts from Cisco or GateD routers are prefered over poor-little pimd.
++asserts from Cisco or GateD routers are preferred over poor-little pimd.
+ .Pp
+ It is reccommended that distances be set such that metrics are never
+ consulted.  However, default routing metrics may also be set using the
+--- a/trace.c
++++ b/trace.c
+@@ -98,7 +98,7 @@
+         }
+     } else {
+         logit(LOG_WARNING, 0, "%s from %s to %s",
+-              "Non decipherable traceroute request recieved",
++              "Non decipherable traceroute request received",
+               inet_fmt(src, s1, sizeof(s1)), inet_fmt(dst, s2, sizeof(s2)));
+         return;
+     }

@@ -1,3 +1,31 @@
+pimd (2.3.0-1) unstable; urgency=medium
+
+  * New upstream release (closes: #788744, #719555)
+    + Mention PIM-SSM support in the package's description
+    + Adjust upstream doc names
+  * Packaging overhaul
+    + Set package format to 3.0 (quilt) (closes: #725554) and filter out
+      upstream's debian/.
+    + Bump compat to 9
+    + Bump standards to 3.9.6, no changes needed
+    + Use the dh sequencer
+    + d/control: move Homepage to the Source stanza (lintian)
+    + drop lintian overrides, no longer valid
+  * Drop d/addons/pimd.conf as it uses the old syntax. Ship upstream's config
+    instead.
+  * Initscript overhaul
+    + Source /lib/lsb/init-functions and use the LSB logging functions
+    + Wait for pimd to exit on stop/restart
+    + Add (graceful) reload and status actions
+    + Fill in the descriptions (lintian)
+  * Add systemd unit
+  * Add d/watch
+  * Add a patch fixing spelling errors in the manpage and the pimd binary
+    (lintian)
+  * Added Apollon as co-maintainer as he is made this awesome update possible
+
+ -- Antonin Kral <A.Kral@sh.cvut.cz>  Tue, 03 Nov 2015 12:19:44 +0100
+
 pimd (2.1.8-2) unstable; urgency=low
 
   * use dpkg-buildflags for build flags (CFLAGS, LDFLAGS, CPPFLAGS),
