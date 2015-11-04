@@ -60,8 +60,9 @@ heading()
     echo "# Initial definitions ..." >> $CFG
     echo "# -D_GNU_SOURCE Use GNU extensions, where possible" >> $CFG
     echo "# -D_BSD_SOURCE Use functions derived from 4.3 BSD Unix rather than POSIX.1" >> $CFG
+    echo "#               In GLIBC >= v2.20 this is replaced with -D_DEFAULT_SOURCE  " >> $CFG
     echo "# -DPIM         Enable PIM extensions in RSRR" >> $CFG
-    echo "DEFS          = -D_BSD_SOURCE -D_GNU_SOURCE -DPIM" >> $CFG
+    echo "DEFS          = -D_BSD_SOURCE -D_DEFAULT_SOURCE -D_GNU_SOURCE -DPIM" >> $CFG
     echo "# EXTRA_OBJS  = For locally provided objects missing on some platforms, e.g., strlcpy.o"  >> $CFG
     echo "# EXTRA_LIBS  = For platform specific libraries, e.g., -lutil" >> $CFG
     echo >> $CFG
@@ -75,13 +76,13 @@ usage()
     print "Usage: configure [ARG]\n"
     print "\n"
     print "  --debug                  Enable debuggable build, -g and -O0\n"
-    print "  --prefix=PATH            Base installation directory, default: /usr/local\n"
-    print "  --sysconfidir=PATH       Path to pimd.conf, default: /etc\n"
+    print "  --prefix=PATH            Base installation directory, default: /usr/local/\n"
+    print "  --sysconfidir=PATH       Path to pimd.conf, default: /etc/\n"
     print "  --embedded-libc          Linux system with uClibc or musl libc.  These two\n"
     print "                           C libraries have strlcpy() and strlcat()"
     print "\n"
     print "By default 'make install' installs files to /usr/local/{sbin, share, man} and\n"
-    print "/etc, this can be changed with the --prefix and --syconfdir options. On top of\n"
+    print "/etc/, this can be changed with the --prefix and --syconfdir options. On top of\n"
     print "this you can also set DESTDIR when installing, to get another root directory.\n"
     print "\n"
     print "  --enable-broken-crc      Interop with older broken Cisco firmware that did\n"
@@ -298,6 +299,17 @@ fi
 
 cat $TMP >> $CFG
 rm $TMP
+
+if [ ! -e libite/lite.h ]; then
+    print "  FIXDEP  libite/lite.h missing ... "
+    git submodule update --init >/dev/null
+    if [ $? -ne 0 ]; then
+	print "FAILED!  No Internet access?"
+	exit 1
+    fi
+    print "OK\n"
+fi
+
 
 exit 0
 

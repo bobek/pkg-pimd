@@ -5,6 +5,21 @@
 #+LaTeX_HEADER: \usepackage{parskip} \usepackage{a4wide}
 #+LaTeX_CLASS_OPTIONS: [twoside, colorlinks=true, linkcolor=blue, urlcolor=blue]
 
+* Version 2.3.1: UNRELEASED
+
+Bug fix release.
+
+** Changes
+- Let build system handle missing libite GIT submodule
+- Issue #61: Debian packaging moved to https://github.com/bobek/pkg-pimd
+
+** Bug Fixes
+- Issue #53: Build problem with Clang on FreeBSD
+- Issue #55: Default config uses =/etcpimd.conf= instead of
+  =/etc/pimd.conf=.  Slashes added and now =pimd -h= lists
+  the default path instead of a hard coded string.
+- Issue #60: Fix minor spelling errors.
+
 * Version 2.3.0: July 31, 2015 -- /PIM-SSM & IGMPv3 release!/
 
 The significant new features in this release would not have been
@@ -38,7 +53,7 @@ Tested on Ubuntu 14.04 (GLIBC/Linux 3.13), Debian 8.1 (GLIBC/Linux
     If all routers on a LAN send this option this value is used in the
     DR election rather than the IP address.  The priority is configured
     per =phyint=.  This closes the long-standing issue #5.
-  - Distribution archive format changed from XZ to Gzip, for the benfit
+  - Distribution archive format changed from XZ to Gzip, for the benefit
     of OpenBSD that only ships Gzip in the base system.
 
 ** New pimd.conf syntax!

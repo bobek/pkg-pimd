@@ -4,8 +4,8 @@
 #       OpenBSD not having bzip2 in the base distribution.
 #
 
-# VERSION      ?= $(shell git tag -l | tail -1)
-VERSION      ?= 2.3.0
+#VERSION       = $(shell git tag -l | tail -1)
+VERSION       = 2.3.1-beta1
 EXEC          = pimd
 CONFIG        = $(EXEC).conf
 PKG           = $(EXEC)-$(VERSION)
@@ -27,8 +27,8 @@ DVMRP_OBJS    = dvmrp_proto.o
 #include <config.mk>
 include config.mk
 
-prefix       ?= /usr/local
-sysconfdir   ?= /etc
+prefix       ?= /usr/local/
+sysconfdir   ?= /etc/
 datadir       = $(prefix)/share/doc/pimd
 mandir        = $(prefix)/share/man/man8
 
@@ -98,7 +98,7 @@ dist:
 		echo "Distribution $(ARCHIVEZ) already exists."; \
 		exit 1; \
 	fi
-	@echo "Building xz tarball of $(PKG) in parent dir ..."
+	@echo "Building gz tarball of $(PKG) in parent dir ..."
 	@$(ARCHTOOL) ../$(ARCHIVE)
 	@gzip ../$(ARCHIVE)
 	@md5sum $(ARCHIVEZ) | tee $(ARCHIVEZ).md5
