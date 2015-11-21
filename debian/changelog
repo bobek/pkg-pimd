@@ -1,3 +1,9 @@
+pimd (2.3.1-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Antonin Kral <A.Kral@sh.cvut.cz>  Sat, 21 Nov 2015 18:09:01 +0100
+
 pimd (2.3.0-1) unstable; urgency=medium
 
   * New upstream release (closes: #788744, #719555)
