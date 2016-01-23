@@ -1,3 +1,9 @@
+pimd (2.3.1-2) unstable; urgency=medium
+
+  * Werror replaced with Wextra in upstream (Closes: Bug#811572)
+
+ -- Antonin Kral <A.Kral@sh.cvut.cz>  Sat, 23 Jan 2016 20:59:08 +0100
+
 pimd (2.3.1-1) unstable; urgency=medium
 
   * New upstream release
