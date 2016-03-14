@@ -5,7 +5,7 @@
 #
 
 #VERSION       = $(shell git tag -l | tail -1)
-VERSION       = 2.3.1
+VERSION       = 2.3.2
 EXEC          = pimd
 CONFIG        = $(EXEC).conf
 PKG           = $(EXEC)-$(VERSION)
@@ -27,15 +27,15 @@ DVMRP_OBJS    = dvmrp_proto.o
 #include <config.mk>
 include config.mk
 
-prefix       ?= /usr/local/
-sysconfdir   ?= /etc/
+prefix       ?= /usr/local
+sysconfdir   ?= /etc
 datadir       = $(prefix)/share/doc/pimd
 mandir        = $(prefix)/share/man/man8
 
 ## Common
 CPPFLAGS     += -D_PATH_SYSCONF=\"$(sysconfdir)\"
 CFLAGS       += $(INCLUDES) $(DEFS) $(USERCOMPILE)
-CFLAGS       += -W -Wall -Werror -fno-strict-aliasing
+CFLAGS       += -W -Wall -Wextra -fno-strict-aliasing
 LDLIBS        = $(EXTRA_LIBS)
 OBJS          = $(IGMP_OBJS) $(ROUTER_OBJS) $(PIM_OBJS) $(DVMRP_OBJS) $(EXTRA_OBJS)
 SRCS          = $(OBJS:.o=.c)
@@ -101,7 +101,7 @@ dist:
 	@echo "Building gz tarball of $(PKG) in parent dir ..."
 	@$(ARCHTOOL) ../$(ARCHIVE)
 	@gzip ../$(ARCHIVE)
-	@md5sum $(ARCHIVEZ) | tee $(ARCHIVEZ).md5
+	@md5sum $(ARCHIVEZ) | sed 's/..\///' | tee $(ARCHIVEZ).md5
 
 build-deb:
 	@echo "Building .deb if $(PKG)..."

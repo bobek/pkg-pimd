@@ -47,7 +47,7 @@ typedef struct {
 static int restart_dr_election     (struct uvif *v);
 static int parse_pim_hello         (char *msg, size_t len, uint32_t src, pim_hello_opts_t *opts);
 static void cache_nbr_settings     (pim_nbr_entry_t *nbr, pim_hello_opts_t *opts);
-static int send_pim_register_stop  (uint32_t reg_src, uint32_t reg_dst, uint32_t inner_source, uint32_t inner_grp);
+static int send_pim_register_stop  (uint32_t reg_src, uint32_t reg_dst, uint32_t inner_grp, uint32_t inner_source);
 static build_jp_message_t *get_jp_working_buff (void);
 static void return_jp_working_buff (pim_nbr_entry_t *pim_nbr);
 static void pack_jp_message        (pim_nbr_entry_t *pim_nbr);
@@ -652,7 +652,7 @@ int receive_pim_register(uint32_t reg_src, uint32_t reg_dst, char *msg, size_t l
     is_null   = ntohl(reg->reg_flags) & PIM_REGISTER_NULL_REGISTER_BIT;
 
     /* initialize the pointer to the encapsulated packet */
-    ip = (struct ip *)(reg + 1);
+    ip = (struct ip *)(msg + sizeof(pim_header_t) + sizeof(pim_register_t));
 
     /* check the IP version (especially for the NULL register...see above) */
     if (ip->ip_v != IPVERSION && (! is_null)) {
@@ -949,11 +949,7 @@ int send_pim_register(char *packet)
 	buf += sizeof(pim_register_t);
 
 	/* Copy the data packet at the back of the register packet */
-#ifdef HAVE_IP_HDRINCL_BSD_ORDER
-	pktlen = ip->ip_len;
-#else
 	pktlen = ntohs(ip->ip_len);
-#endif
 	memcpy(buf, ip, pktlen);
 
 	pktlen += sizeof(pim_register_t); /* 'sizeof(struct ip) + sizeof(pim_header_t)' added by send_pim()  */
@@ -996,11 +992,7 @@ int send_pim_null_register(mrtentry_t *mrtentry)
     ip->ip_id    = 0;
     ip->ip_off   = 0;
     ip->ip_p     = IPPROTO_UDP;			/* XXX: bogus */
-#ifdef HAVE_IP_HDRINCL_BSD_ORDER
-    ip->ip_len   = sizeof(struct ip);
-#else
     ip->ip_len   = htons(sizeof(struct ip));
-#endif
     ip->ip_ttl   = MINTTL; /* TODO: XXX: check whether need to setup the ttl */
     ip->ip_src.s_addr = mrtentry->source->address;
     ip->ip_dst.s_addr = mrtentry->group->group;
@@ -1039,7 +1031,8 @@ int receive_pim_register_stop(uint32_t reg_src, uint32_t reg_dst, char *msg, siz
     GET_EGADDR(&egaddr,  data);
     GET_EUADDR(&eusaddr, data);
 
-    logit(LOG_INFO, 0, "Received PIM_REGISTER_STOP from RP %s to %s for src = %s and group = %s", inet_fmt(reg_src, s1, sizeof(s1)), inet_fmt(reg_dst, s2, sizeof(s2)),
+    logit(LOG_INFO, 0, "Received PIM_REGISTER_STOP from RP %s to %s for src = %s and group = %s",
+	  inet_fmt(reg_src, s1, sizeof(s1)), inet_fmt(reg_dst, s2, sizeof(s2)),
 	  inet_fmt(eusaddr.unicast_addr, s3, sizeof(s3)),
 	  inet_fmt(egaddr.mcast_addr, s4, sizeof(s4)));
 
@@ -1078,9 +1071,8 @@ send_pim_register_stop(uint32_t reg_src, uint32_t reg_dst, uint32_t inner_grp, u
     char   *buf;
     uint8_t *data;
 
-    if (IN_PIM_SSM_RANGE(inner_grp)) {
+    if (IN_PIM_SSM_RANGE(inner_grp))
 	return TRUE;
-    }
 
     logit(LOG_INFO, 0, "Send PIM REGISTER STOP from %s to router %s for src = %s and group = %s",
 	  inet_fmt(reg_src, s1, sizeof(s1)), inet_fmt(reg_dst, s2, sizeof(s2)),
@@ -2379,7 +2371,7 @@ int add_jp_entry(pim_nbr_entry_t *pim_nbr, uint16_t holdtime, uint32_t group,
     if (!bjpm) {
 	bjpm = get_jp_working_buff();
 	if (!bjpm) {
-	    logit(LOG_ERR, 0, "Failed allocating working buffer in add_jp_entry()\n");
+	    logit(LOG_ERR, 0, "Failed allocating working buffer in add_jp_entry()");
 	    exit (-1);
 	}
 
@@ -2823,7 +2815,7 @@ int receive_pim_assert(uint32_t src, uint32_t dst __attribute__((unused)), char 
 	    mrt2 = NULL;
 	}
 
-	if (mrt2) {
+	if (mrt2 && (mrt2->flags & MRTF_NEW)) {
 	    mrt2->flags &= ~MRTF_NEW;
 	    /* TODO: XXX: The spec doesn't say what entry timer value
 	     * to use when the routing entry is created because of asserts.
@@ -2868,9 +2860,10 @@ int receive_pim_assert(uint32_t src, uint32_t dst __attribute__((unused)), char 
 
 	/* Have to remove that outgoing vifi from mrt */
 	VIFM_SET(vifi, mrt->asserted_oifs);
-	/* TODO: XXX: TIMER implem. dependency! */
-	if (mrt->timer < PIM_ASSERT_TIMEOUT)
-	    SET_TIMER(mrt->timer, PIM_ASSERT_TIMEOUT);
+	mrt->flags |= MRTF_ASSERTED;
+	if (mrt->assert_timer < PIM_ASSERT_TIMEOUT)
+	    SET_TIMER(mrt->assert_timer, PIM_ASSERT_TIMEOUT);
+
 	/* TODO: XXX: check that the timer of all affected routing entries
 	 * has been restarted.
 	 */
@@ -2893,6 +2886,10 @@ int receive_pim_assert(uint32_t src, uint32_t dst __attribute__((unused)), char 
 				     * win the assert, so don't change it.
 				     */
 	}
+
+	/* Ignore assert message if we do not have an upstream router */
+	if (mrt->upstream == NULL)
+	    return FALSE;
 
 	/* TODO: where to get the local metric and preference from?
 	 * system call or mrt is fine?

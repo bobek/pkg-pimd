@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.Dd Jul 29, 2015
+.Dd Mar 3, 2016
 .\" Please adjust this date whenever revising the manpage.
 .Dt PIMD 8 SMM
 .Os
@@ -13,14 +13,14 @@
 .Nm pimd
 .Op Fl fhlNqr
 .Op Fl c Ar FILE
-.Op Fl d Ar [LEVEL[,LEVEL,...]
+.Op Fl d Ar [SYS[,SYS,...]
 .Op Fl s Ar LEVEL
 .Sh DESCRIPTION
 .Nm
 is a lightweight, stand-alone PIM-SM/SSM v2 multicast routing daemon
 available under the free 3-clause BSD license.  This is the restored
-original version University of Southern California, by Ahmed Helmy,
-Rusty Eddy and Pavlin Ivanov Radoslavov.
+original from University of Southern California, by Ahmed Helmy, Rusty
+Eddy and Pavlin Ivanov Radoslavov.
 .Pp
 Protocol Independent Multicast - Sparse Mode (PIM-SM):
 .Bl -bullet -width 1n -compact
@@ -54,9 +54,16 @@ options starting with two dashes (`-').  The options are as follows:
 .It Fl h, -help
 Print a help message and exit.
 .It Fl c, -config=FILE
-Specify an alternative configuration file, instead of the default
+Specify an alternative configuration file, default
 .Pa /etc/pimd.conf .
-.It Fl d, -debug[=LEVEL[,LEVEL...]
+If
+.Nm
+cannot find its configuration file it will start up with fallback
+defaults, which include enabling both
+.Cm bsr-candidate
+and
+.Cm rp-candidate .
+.It Fl d, -debug[=SYS[,SYS...]
 By default,
 .Nm
 daemonizes itself by detaching from the invoking terminal and forking to
@@ -66,16 +73,13 @@ or
 .Fl f, -foreground
 is specified,
 .Nm
-runs in the foreground of the starting terminal and responds to signals.
-If
+runs in the foreground of the starting terminal.  If
 .Fl d
-is given with no argument, the debug level defaults to
-.Nm igmp, cache, interface, groups, prunes, routes and peers .
-.sp
-Regardless of the debug level,
+is given without any argument
 .Nm
-always writes warning and error messages to the system log daemon.
-Debug levels have the following effects:
+defaults to debug all subystems.
+.Pp
+Available subsystems are:
 .Pp
 .Bl -tag -width pim_routes -compact -offset indent
 .It Cm packet
@@ -152,22 +156,21 @@ Show
 .Nm
 version
 .It Fl s, -loglevel=LEVEL
-Set syslog level to one of the following:
+Set log level to one of the following, default
+.Nm notice :
 .Pp
 .Bl -tag -width WARNING -compact -offset indent
-.It Cm ALERT
-Action must be taken immediately
-.It Cm CRIT
-Critical conditions
-.It Cm ERR
+.It Cm none
+Disable all logging
+.It Cm error
 Error conditions
-.It Cm WARNING
+.It Cm warning
 Warning conditions
-.It Cm NOTICE
+.It Cm notice
 Normal but significant condition (Default)
-.It Cm INFO
+.It Cm info
 Informational
-.It Cm DEBUG
+.It Cm debug
 Debug-level messages
 .El
 .El
@@ -387,18 +390,17 @@ will either be completely silent (if you provide the
 command line option), or simply assume that you want it to utilize all interfaces
 using default settings.
 .Pp
-The
-.Nm bsr-candidate
-setting is similar to
-.Nm rp-candidate .
-Only difference is the lack of an interval
-.Nm time
-option.
+Both the
+.Cm bsr-candidate
+(CBSR) and
+.Cm rp-candidate
+(CRP) settings are enabled in the default configuration.  Disabling
+them, by commenting them out in the config file, for all PIM capable
+routers is a bad idea.  When troubleshooting, ensure at least one
+bootstrap router (BSR) and at least one rendez-vous point (RP) in
+PIM-SM, is available.  Both settings share the following options, with
+priority being interpreted differently:
 .Pp
-The
-.Nm rp-candidate
-setting refers to Candidate Rendezvous Point (CRP).  It specifies which
-interface on this machine should be included in RP elections:
 .Bl -bullet -offset indent -width 1n -compact
 .It
 .Nm address | ifname :
@@ -408,13 +410,16 @@ If both address and ifname is left out,
 will default to the highest active IP address.
 .It
 .Nm priority Ar <0-255> :
-How important this CRP is compared to others. The lower the value here,
-the more important the CRP.  Default is 0 for pimd and Cisco IOS, but
-the standard says 192.
+How important this router is compared to others.  For CRP, the lower the
+value the more important the router is considered.  For BSR it is of
+course the exact opposite: a higher value is preferred.  If the priority
+is left out
+.Nm
+and Cisco IOS defaults to 0 for both, but the standard says 192 for RP.
 .It
 .Nm time Ar <10-16383> :
 The number of seconds to wait between advertising this CRP.  The default
-value is 60 seconds.
+value is 30 seconds.  Use a lower value for faster convergence.
 .El
 .Pp
 .Bl -item -offset indent -compact
@@ -450,7 +455,7 @@ address and netmask.  Default group and netmask is 224.0.0.0/16.
 .Nm Note:
 all static RP's are announced with priority 1.
 .Pp
-The 
+The
 .Nm spt-threshold
 setting replaces two older configuration settings,
 .Nm switch_data_threshold

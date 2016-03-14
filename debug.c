@@ -40,6 +40,7 @@
  *
  */
 
+#define SYSLOG_NAMES
 #include "defs.h"
 
 #include <stdarg.h>
@@ -48,6 +49,7 @@
 #define MAX_MSG_SIZE 64                  /* Max for dump_frame() */
 
 int log_nmsgs = 0;
+int loglevel = LOG_NOTICE;
 unsigned long debug = 0x00000000;        /* If (long) is smaller than
 					  * 4 bytes, then we are in
 					  * trouble.
@@ -380,9 +382,21 @@ void dump_vifs(FILE *fp)
 	    }
 	}
     }
+
     fprintf(fp, "\n\n");
 }
 
+int loglvl(char *level)
+{
+    int i;
+
+    for (i = 0; prioritynames[i].c_name; i++) {
+	if (string_match(prioritynames[i].c_name, level))
+	    return prioritynames[i].c_val;
+    }
+
+    return atoi(level);
+}
 
 /*
  * Log errors and other messages to the system log daemon and to stderr,
@@ -392,16 +406,14 @@ void dump_vifs(FILE *fp)
 void logit(int severity, int syserr, const char *format, ...)
 {
     va_list ap;
-    static char fmt[211] = "warning - ";
-    char *msg;
+    char msg[211];
     struct timeval now;
     struct tm *thyme;
     time_t lt;
 
     va_start(ap, format);
-    vsnprintf(&fmt[10], sizeof(fmt) - 10, format, ap);
+    vsnprintf(msg, sizeof(msg), format, ap);
     va_end(ap);
-    msg = (severity == LOG_WARNING) ? fmt : &fmt[10];
 
     /*
      * Log to stderr if we haven't forked yet and it's a warning or
@@ -414,28 +426,33 @@ void logit(int severity, int syserr, const char *format, ...)
 
 	if (!debug)
 	    fprintf(stderr, "%s: ", __progname);
+
 	fprintf(stderr, "%02d:%02d:%02d.%03ld %s", thyme->tm_hour, thyme->tm_min,
 		thyme->tm_sec, (long int)(now.tv_usec / 1000), msg);
-	if (syserr == 0)
-	    fprintf(stderr, "\n");
-	else
-	    fprintf(stderr, ":(error %d): %s\n", syserr, strerror(syserr));
+
+	if (syserr) {
+	    errno = syserr;
+	    fprintf(stderr, ": %m");
+	}
+	fprintf(stderr, "\n");
     }
 
     /*
      * Always log things that are worse than warnings, no matter what
      * the log_nmsgs rate limiter says.
      *
-     * Only count things worse than debugging in the rate limiter (since
-     * if you put daemon.debug in syslog.conf you probably actually want
-     * to log the debugging messages so they shouldn't be rate-limited)
+     * Only count things at the defined loglevel or worse in the rate limiter
+     * and exclude debugging (since if you put daemon.debug in syslog.conf
+     * you probably actually want to log the debugging messages so they
+     * shouldn't be rate-limited)
      */
     if ((severity < LOG_WARNING) || (log_nmsgs < LOG_MAX_MSGS)) {
-	if (severity < LOG_DEBUG)
+	if ((severity <= loglevel) && (severity != LOG_DEBUG))
 	    log_nmsgs++;
-	if (syserr != 0) {
+
+	if (syserr) {
 	    errno = syserr;
-	    syslog(severity, "%s: %s", msg, strerror(syserr));
+	    syslog(severity, "%s: %m", msg);
 	} else {
 	    syslog(severity, "%s", msg);
 	}

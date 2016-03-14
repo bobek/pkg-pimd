@@ -1,10 +1,41 @@
 #+TITLE:    pimd | Change Log
-#+AUTHOR:   Ahmed Helmy, George Edmond Eddy, Pavlin Ivanov Radoslavov, \and{} Markus Veranen
+#+AUTHOR:   Ahmed Helmy, George Edmond Eddy, Pavlin Ivanov Radoslavov, and Markus Veranen
 #+OPTIONS: toc:nil
 #+OPTIONS: H:3 num:0
 #+LaTeX_HEADER: \usepackage{parskip} \usepackage{a4wide}
 #+LaTeX_CLASS_OPTIONS: [twoside, colorlinks=true, linkcolor=blue, urlcolor=blue]
 
+* Version 2.3.2: March 10, 2016
+
+Bug fix release.  All users should upgrade, in particular FreeBSD users!
+
+** Changes
+- Minor code cleanup and readability changes to simplify the code.
+- Update to libite v1.4.2 with improved =min()=/=max()= macros
+- Use =-Wextra= not =-Werror= in default =CFLAGS=, this to ensure that pimd
+  still builds OK on newer and more pedantic compilers
+- Update man page and example `pimd.conf` with details on `rp-candidate`
+  `bsr-candidate`, two very important settings for correct operation.
+
+** Bug Fixes
+- Issue #57: Multicast routing table not updated on FreeBSD.  Introduced
+  with issue #23, in pimd v2.2.0. Too intrusive changes altered handling
+  (forwarding) of PIM register messages.  This only affects BSD systems,
+  in particular FreeBSD 10.2 (current), or any FreeBSD < 11.0
+- Issue #63: Mika Joutsenvirta <mailto:mika.joutsenvirta@insta.fi> found
+  and fixed serious issues with the PIM Assert timeout handling.
+- Issue #65: Missing slash in config file path when using env. variable
+- Issue #66: Make it possible to run =pimd= without a configuration
+  file.  If =pimd= cannot find its configuration file it will use
+  built-in fallback settings for =bsr-candidate= and =rp-candidate=.
+  This to ensure you do not end up with a non-working setup.  To disable
+  =bsr-candidate= and =rp-candidate=, simply leave them out of your
+  config file, and make sure =pimd= can find the file.
+- Issue #69: Rate limit only what is actually logged.  The =logit()=
+  function counted filtered messages, causing long periods of silence
+  for no reason.  Fix by Apollon Oikonomopoulos <mailto:apollon@skroutz.gr>
+
+#+LATEX: \newpage
 * Version 2.3.1: November 15, 2015
 
 Bug fix release.
@@ -20,6 +51,7 @@ Bug fix release.
   the default path instead of a hard coded string.
 - Issue #60: Fix minor spelling errors.
 
+#+LATEX: \newpage
 * Version 2.3.0: July 31, 2015 -- /PIM-SSM & IGMPv3 release!/
 
 The significant new features in this release would not have been
@@ -313,25 +345,21 @@ using the =configure= script, to take effect.  For details, see
 
 #+LATEX: \newpage
 * Version 2.1.1: January 17, 2010
+
+Merged all patches from http://lintrack.org.
+
 ** Changes & New Features
   - Bumping version again to celebrate the changes and make it easier for
     distributions to handle the upgrade.
-
-** Bug Fixes
-Merged all patches from http://lintrack.org.
-
-  - =001-debian-6.diff=: Already merged, no-op - only documenting in case anyone
-    wonders about it.
-
   - =002-better-rp_address.diff=: Support multicast group address in static
     Rendez-Vous Point .conf option.
-
-  - =003-ltfixes.diff=: Various bug fixes and error handling improvements.
-
   - =004-disableall.diff=: Add -N option to pimd.
-
   - =005-vifenable.diff=: Add enable keyword to phyint .conf option.
 
+** Bug Fixes
+  - =001-debian-6.diff=: Already merged, no-op - only documenting in case anyone
+    wonders about it.
+  - =003-ltfixes.diff=: Various bug fixes and error handling improvements.
   - =006-dot19.diff=: The lost alpha29.18 and alpha29.19 fixes by Pavlin Radoslavov.
 
 * Version 2.1.0, January 16, 2010

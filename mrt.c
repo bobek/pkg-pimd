@@ -137,14 +137,15 @@ mrtentry_t *find_route(uint32_t source, uint32_t group, uint16_t flags, char cre
 
     if (flags & (MRTF_SG | MRTF_WC)) {
 	if (!IN_MULTICAST(ntohl(group))) {
-	    logit(LOG_WARNING, 0, "Not a multicast addr....");
+	    logit(LOG_WARNING, 0, "find_route: Not a multicast group address (%s) ...",
+		  inet_fmt(group, s1, sizeof(s1)));
 	    return NULL;
 	}
     }
 
     if (flags & MRTF_SG) {
 	if (!inet_valid_host(source) && !IN_PIM_SSM_RANGE(group)) {
-	    logit(LOG_WARNING, 0, "Not a valid host (%s)....",
+	    logit(LOG_WARNING, 0, "find_route: Not a valid host (%s) ...",
 		  inet_fmt(source, s1, sizeof(s1)));
 	    return NULL;
 	}
@@ -172,9 +173,9 @@ mrtentry_t *find_route(uint32_t source, uint32_t group, uint16_t flags, char cre
 		    /* Exact (S,G) entry found */
 		    logit(LOG_DEBUG, 0 , "find_route: exact (S,G) entry found");
 		    return mrt;
-		} else {
-		    logit(LOG_DEBUG, 0 , "find_route:(S,G) entry not found");
 		}
+
+		logit(LOG_DEBUG, 0 , "find_route:(S,G) entry not found");
 	    }
 
 	    /* No (S,G) entry. Return the (*,G) entry (if exist) */
