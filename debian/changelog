@@ -1,3 +1,12 @@
+pimd (2.3.2-2) unstable; urgency=medium
+
+  * Bump Standards to 3.9.8; no changes needed
+  * Enable all hardening flags
+  * Depend on lsb-base for the initscript
+  * pimd.service: add Documentation key
+
+ -- Apollon Oikonomopoulos <apoikos@debian.org>  Mon, 23 Jan 2017 12:33:14 +0200
+
 pimd (2.3.2-1) unstable; urgency=medium
 
   * New upstream release
