@@ -11,7 +11,7 @@ Vcs-Browser: https://github.com/bobek/pkg-pimd/tree/debian/sid
 
 Package: pimd
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, lsb-base (>= 3.0-6), ${misc:Depends}
 Conflicts: mrouted, smcroute
 Description: multicast routing daemon (PIMv2)
  pimd is implementation of Protocol Independent Multicast routing daemon.
