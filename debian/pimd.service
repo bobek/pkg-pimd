@@ -1,5 +1,7 @@
 [Unit]
 Description=PIM-SM/SSM multicast routing daemon
+Documentation=man:pimd(8)
+Documentation=file:/usr/share/doc/pimd/README.md.gz
 After=network.target
 
 [Service]
