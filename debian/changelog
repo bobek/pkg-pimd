@@ -2,6 +2,7 @@ pimd (2.3.2-2) unstable; urgency=medium
 
   * Fix FTCBFS: Pass CC to make. (Closes: #941678)
     Special thanks to Helmut Grohne
+  * Bump compat level to 12 and replace dh-systemd with dh_installsystemd
 
  -- Antonin Kral <A.Kral@sh.cvut.cz>  Mon, 07 Oct 2019 11:28:22 +0200
 

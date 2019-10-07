@@ -5,7 +5,7 @@ export DH_VERBOSE=1
 include /usr/share/dpkg/buildtools.mk
 
 %:
-	dh $@ --with systemd
+	dh $@
 
 override_dh_auto_configure:
 	./configure --prefix=/usr --sysconfdir=/etc
@@ -19,6 +19,7 @@ override_dh_auto_clean:
 
 override_dh_auto_install:
 	dh_auto_install
+	dh_installsystemd
 	rm $(CURDIR)/debian/pimd/usr/share/doc/pimd/LICENSE
 	rm $(CURDIR)/debian/pimd/usr/share/doc/pimd/LICENSE.mrouted
 	rm $(CURDIR)/debian/pimd/usr/share/doc/pimd/INSTALL.md
