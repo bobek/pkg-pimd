@@ -1,14 +1,17 @@
 #!/usr/bin/make -f
 
-# Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
+
+include /usr/share/dpkg/buildtools.mk
 
 %:
 	dh $@ --with systemd
 
-
 override_dh_auto_configure:
 	./configure --prefix=/usr --sysconfdir=/etc
+
+override_dh_auto_build:
+	dh_auto_build -- 'CC=$(CC)'
 
 override_dh_auto_clean:
 	touch config.mk

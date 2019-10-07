@@ -1,3 +1,10 @@
+pimd (2.3.2-2) unstable; urgency=medium
+
+  * Fix FTCBFS: Pass CC to make. (Closes: #941678)
+    Special thanks to Helmut Grohne
+
+ -- Antonin Kral <A.Kral@sh.cvut.cz>  Mon, 07 Oct 2019 11:28:22 +0200
+
 pimd (2.3.2-1) unstable; urgency=medium
 
   * New upstream release

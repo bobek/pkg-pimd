@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Antonin Kral <A.Kral@sh.cvut.cz>
 Uploaders: Apollon Oikonomopoulos <apoikos@debian.org>
 Build-Depends: debhelper (>= 9), dh-systemd (>= 1.5)
-Standards-Version: 3.9.7
+Standards-Version: 4.4.1
 Homepage: http://github.com/troglobit/pimd
 Vcs-Git: https://github.com/bobek/pkg-pimd.git
 Vcs-Browser: https://github.com/bobek/pkg-pimd/tree/debian/sid
