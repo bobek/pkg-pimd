@@ -1,10 +1,19 @@
-pimd (2.3.2-2) unstable; urgency=medium
+pimd (2.3.2-3) unstable; urgency=medium
 
   * Fix FTCBFS: Pass CC to make. (Closes: #941678)
     Special thanks to Helmut Grohne
   * Bump compat level to 12 and replace dh-systemd with dh_installsystemd
 
  -- Antonin Kral <A.Kral@sh.cvut.cz>  Mon, 07 Oct 2019 11:28:22 +0200
+
+pimd (2.3.2-2) unstable; urgency=medium
+
+  * Bump Standards to 3.9.8; no changes needed
+  * Enable all hardening flags
+  * Depend on lsb-base for the initscript
+  * pimd.service: add Documentation key
+
+ -- Apollon Oikonomopoulos <apoikos@debian.org>  Mon, 23 Jan 2017 12:33:14 +0200
 
 pimd (2.3.2-1) unstable; urgency=medium
 
