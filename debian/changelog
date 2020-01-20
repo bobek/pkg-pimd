@@ -3,6 +3,8 @@ pimd (2.3.2-4) UNRELEASED; urgency=medium
   * Trim trailing whitespace.
   * Use secure URI in Homepage field.
   * Set debhelper-compat version in Build-Depends.
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
+    Repository-Browse.
 
  -- Debian Janitor <janitor@jelmer.uk>  Mon, 20 Jan 2020 20:21:15 +0000
 
