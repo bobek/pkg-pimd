@@ -5,7 +5,7 @@ Maintainer: Antonin Kral <A.Kral@sh.cvut.cz>
 Uploaders: Apollon Oikonomopoulos <apoikos@debian.org>
 Build-Depends: debhelper (>= 12)
 Standards-Version: 4.4.1
-Homepage: http://github.com/troglobit/pimd
+Homepage: https://github.com/troglobit/pimd
 Vcs-Git: https://github.com/bobek/pkg-pimd.git
 Vcs-Browser: https://github.com/bobek/pkg-pimd/tree/debian/sid
 
