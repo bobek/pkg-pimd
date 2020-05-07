@@ -1,3 +1,14 @@
+pimd (2.3.2-4) UNRELEASED; urgency=medium
+
+  * Trim trailing whitespace.
+  * Use secure URI in Homepage field.
+  * Set debhelper-compat version in Build-Depends.
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
+    Repository-Browse.
+  * Update standards version to 4.5.0, no changes needed.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Mon, 20 Jan 2020 20:21:15 +0000
+
 pimd (2.3.2-3) unstable; urgency=medium
 
   * Fix FTCBFS: Pass CC to make. (Closes: #941678)
@@ -241,4 +252,3 @@ pimd (2.1.0-alpha29.17-1) unstable; urgency=low
   * Initial Release, closes #186454
 
  -- Antonin Kral <A.Kral@sh.cvut.cz>  Thu, 27 Mar 2003 10:12:47 +0100
-
