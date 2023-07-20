@@ -1,4 +1,4 @@
-pimd (2.3.2-4) UNRELEASED; urgency=medium
+pimd (2.3.2-4) unstable; urgency=medium
 
   * Trim trailing whitespace.
   * Use secure URI in Homepage field.
@@ -6,8 +6,9 @@ pimd (2.3.2-4) UNRELEASED; urgency=medium
   * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
     Repository-Browse.
   * Update standards version to 4.5.0, no changes needed.
+  * Drop `lsb-base`.
 
- -- Debian Janitor <janitor@jelmer.uk>  Mon, 20 Jan 2020 20:21:15 +0000
+ -- Antonin Kral <A.Kral@sh.cvut.cz>  Thu, 20 Jul 2023 16:21:15 +0000
 
 pimd (2.3.2-3) unstable; urgency=medium
 
